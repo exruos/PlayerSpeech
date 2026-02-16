@@ -17,7 +17,10 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Create clean Zip
-        run: zip -r PlayerSpeech.zip . -x "README.md" ".gitignore" ".gitattributes" ".git/*" ".github/*"
+        run: |
+          mkdir -p PlayerSpeech
+          cp Config.lua ErrorMaps.lua LICENSE PlayerSpeech.lua PlayerSpeech.toc PlayerSpeech/
+          zip -r PlayerSpeech.zip PlayerSpeech
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
