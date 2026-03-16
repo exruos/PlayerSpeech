@@ -122,6 +122,30 @@ local function InitializeSettings()
     Settings.CreateCheckbox(category, cvarSetting,
         "Toggle Sound_EnableErrorSpeech as found in the default sound options. Should be disable to prevent overlapping sounds.")
 
+    -- SPEECH_COOLDOWN_SLIDER
+
+    do
+        local defaultValue = 1.5
+        if addon.db.soundCooldown == nil then
+            addon.db.soundCooldown = defaultValue
+        end
+
+        local setting = Settings.RegisterProxySetting(category, "SPEECH_COOLDOWN", type(1.5), "Sound Cooldown",
+            defaultValue,
+            function() return addon.db.soundCooldown end,
+            function(value) addon.db.soundCooldown = value end
+        )
+
+        local minValue, maxValue, step = 0.0, 10.0, 0.1
+        local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+        options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right, function(value)
+            return string.format("%.1f", value) .. "s"
+        end)
+
+        Settings.CreateSlider(category, setting, options,
+            "Minimum time between playing error sounds. This is to prevent spam when multiple different events are triggered at once.")
+    end
+
     -- SPEECH_EVENT_TOGGLES
 
     local subcategory, subLayout = Settings.RegisterVerticalLayoutSubcategory(category, "Event Toggles")

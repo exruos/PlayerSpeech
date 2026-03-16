@@ -50,13 +50,11 @@ local function OnEvent(self, event, messageType, msg)
 
     local soundId = GetErrorSoundIdFrom(msg, addon.db.race, addon.db.gender)
     if soundId then
-        if msg == ERR_ABILITY_COOLDOWN then
-            local currentTime = GetTime()
-            if (currentTime - lastGlobalSoundTime) < 1.5 then
-                return
-            end
-            lastGlobalSoundTime = currentTime
+        local currentTime = GetTime()
+        if (currentTime - lastGlobalSoundTime) < addon.db.soundCooldown then
+            return
         end
+        lastGlobalSoundTime = currentTime
 
         PlaySound(soundId, "Dialog", true)
     end
