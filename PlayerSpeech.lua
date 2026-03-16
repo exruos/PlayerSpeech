@@ -37,11 +37,15 @@ local function OnEvent(self, event, messageType, msg)
         return
     end
 
+    if addon.db.eventToggles[msg] == false then
+        return
+    end
+
     if not PlayerIsInCombat() and addon.db.visage then
         local visageAura = C_UnitAuras.GetPlayerAuraBySpellID(372014)
-            if visageAura then
-                return
-            end
+        if visageAura then
+            return
+        end
     end
 
     local soundId = GetErrorSoundIdFrom(msg, addon.db.race, addon.db.gender)
@@ -60,4 +64,3 @@ end
 
 eventListenerFrame:RegisterEvent("UI_ERROR_MESSAGE")
 eventListenerFrame:SetScript("OnEvent", OnEvent)
-
