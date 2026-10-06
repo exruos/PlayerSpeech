@@ -3,6 +3,10 @@ local eventListenerFrame = CreateFrame("Frame", "UIErrorEventListenerFrame")
 
 local lastGlobalSoundTime = 0
 local RACE_ERROR_MAPS = {}
+local IGNORED_SPELL_IDS = {
+    [1297434] = true,
+}
+local lastIgnoredFailTime = -1
 
 setmetatable(RACE_ERROR_MAPS, {
     __index = function(t, key)
@@ -32,8 +36,8 @@ function GetErrorSoundIdFrom(errConst, raceName, gender)
     return nil
 end
 
-local function OnEvent(self, event, messageType, msg)
-    if not addon.db.enabled then
+local function HandleErrorMessage(msg, errorTime)
+    if lastIgnoredFailTime == errorTime then
         return
     end
 
@@ -60,5 +64,26 @@ local function OnEvent(self, event, messageType, msg)
     end
 end
 
+local function OnEvent(self, event, ...)
+    if not addon.db.enabled then
+        return
+    end
+
+    if event == "UNIT_SPELLCAST_FAILED" then
+        local _, _, spellID = ...
+        if IGNORED_SPELL_IDS[spellID] then
+            lastIgnoredFailTime = GetTime()
+        end
+        return
+    end
+
+    local _, msg = ...
+    local errorTime = GetTime()
+    C_Timer.After(0, function()
+        HandleErrorMessage(msg, errorTime)
+    end)
+end
+
 eventListenerFrame:RegisterEvent("UI_ERROR_MESSAGE")
+eventListenerFrame:RegisterUnitEvent("UNIT_SPELLCAST_FAILED", "player")
 eventListenerFrame:SetScript("OnEvent", OnEvent)
