@@ -1,0 +1,5 @@
+package-as: PlayerSpeech
+
+ignore:
+  - assets
+  - README.md
