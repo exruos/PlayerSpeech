@@ -1,7 +1,23 @@
 local addonName, addon = ...
 _G[addonName] = addon
 
-local _, raceName = UnitRace("player")
+local RACE_FILE_TO_KEY = {
+    NightElf = "Night Elf",
+    Scourge = "Undead",
+    BloodElf = "Blood Elf",
+    HighmountainTauren = "Highmountain Tauren",
+    VoidElf = "Void Elf",
+    LightforgedDraenei = "Lightforged Draenei",
+    MagharOrc = "Mag'har Orc",
+    DarkIronDwarf = "Dark Iron Dwarf",
+    KulTiran = "Kul Tiran",
+    ZandalariTroll = "Zandalari Troll",
+    EarthenDwarf = "Earthen",
+    Harronir = "Haranir",
+}
+
+local _, raceFile = UnitRace("player")
+local raceName = RACE_FILE_TO_KEY[raceFile] or raceFile
 local defaultGender = UnitSex("player")
 
 local category = Settings.RegisterVerticalLayoutCategory("PlayerSpeech")
@@ -27,7 +43,7 @@ local function InitializeSettings()
         "Orc", "Undead", "Tauren", "Troll", "Blood Elf", "Blood Elf (DH)", "Goblin", "Nightborne",
         "Highmountain Tauren", "Void Elf", "Lightforged Draenei", "Mag'har Orc",
         "Dark Iron Dwarf", "Kul Tiran", "Zandalari Troll", "Mechagnome", "Vulpera", "Dracthyr", "Dracthyr (Visage)",
-        "Haranir"
+        "Earthen", "Haranir"
     }
 
     local function GetRaceValue()
@@ -154,7 +170,7 @@ local function InitializeSettings()
         "displayed and entering it into the search box in the top-right corner."
     ))
 
-    local factory = ERR_MAP_FACTORY["Human"]
+    local factory = addon.ERR_MAP_FACTORY["Human"]
 
     if factory then
         local map = factory()
@@ -231,7 +247,7 @@ frame:SetScript("OnEvent", function(self, event, name)
 
         -- Set Defaults
         if addon.db.enabled == nil then addon.db.enabled = true end
-        if addon.db.race == nil then addon.db.race = raceName end
+        if not addon.ERR_MAP_FACTORY[addon.db.race] then addon.db.race = raceName end
         if addon.db.gender == nil then addon.db.gender = defaultGender end
         if addon.db.visage == nil then addon.db.visage = true end
         if addon.db.eventToggles == nil then addon.db.eventToggles = {} end
