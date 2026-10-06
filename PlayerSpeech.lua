@@ -10,7 +10,7 @@ local lastIgnoredFailTime = -1
 
 setmetatable(RACE_ERROR_MAPS, {
     __index = function(t, key)
-        local factoryFunc = ERR_MAP_FACTORY[key]
+        local factoryFunc = addon.ERR_MAP_FACTORY[key]
 
         if factoryFunc then
             t[key] = factoryFunc()
@@ -20,7 +20,7 @@ setmetatable(RACE_ERROR_MAPS, {
     end
 })
 
-function GetErrorSoundIdFrom(errConst, raceName, gender)
+local function GetErrorSoundIdFrom(errConst, raceName, gender)
     local raceMap = RACE_ERROR_MAPS[raceName]
 
     if not raceMap then
@@ -36,12 +36,8 @@ function GetErrorSoundIdFrom(errConst, raceName, gender)
     return nil
 end
 
-local function HandleErrorMessage(msg, errorTime)
+local function HandleErrorMessage(soundId, errorTime)
     if lastIgnoredFailTime == errorTime then
-        return
-    end
-
-    if addon.db.eventToggles[msg] == false then
         return
     end
 
@@ -52,16 +48,13 @@ local function HandleErrorMessage(msg, errorTime)
         end
     end
 
-    local soundId = GetErrorSoundIdFrom(msg, addon.db.race, addon.db.gender)
-    if soundId then
-        local currentTime = GetTime()
-        if (currentTime - lastGlobalSoundTime) < addon.db.soundCooldown then
-            return
-        end
-        lastGlobalSoundTime = currentTime
-
-        PlaySound(soundId, "Dialog", true)
+    local currentTime = GetTime()
+    if (currentTime - lastGlobalSoundTime) < addon.db.soundCooldown then
+        return
     end
+    lastGlobalSoundTime = currentTime
+
+    PlaySound(soundId, "Dialog", true)
 end
 
 local function OnEvent(self, event, ...)
@@ -78,9 +71,18 @@ local function OnEvent(self, event, ...)
     end
 
     local _, msg = ...
+    if addon.db.eventToggles[msg] == false then
+        return
+    end
+
+    local soundId = GetErrorSoundIdFrom(msg, addon.db.race, addon.db.gender)
+    if not soundId then
+        return
+    end
+
     local errorTime = GetTime()
     C_Timer.After(0, function()
-        HandleErrorMessage(msg, errorTime)
+        HandleErrorMessage(soundId, errorTime)
     end)
 end
 

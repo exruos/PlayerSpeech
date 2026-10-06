@@ -1,4 +1,6 @@
-ERR_MAP_FACTORY = {
+local _, addon = ...
+
+addon.ERR_MAP_FACTORY = {
     ["Human"] = function()
         return {
             [ERR_INV_FULL] = { [2] = 1875, [3] = 1999 },
