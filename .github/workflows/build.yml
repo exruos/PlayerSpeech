@@ -37,3 +37,10 @@ jobs:
         uses: BigWigsMods/packager@v2
         env:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attach custom voice template
+        run: |
+          zip -r PlayerSpeech_Custom.zip PlayerSpeech_Custom
+          gh release upload "$GITHUB_REF_NAME" PlayerSpeech_Custom.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

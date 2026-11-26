@@ -22,6 +22,23 @@ local defaultGender = UnitSex("player")
 
 local category = Settings.RegisterVerticalLayoutCategory("PlayerSpeech")
 
+local races = {
+    "Human", "Gilnean", "Dwarf", "Night Elf", "Night Elf (DH)", "Gnome", "Draenei", "Worgen", "Pandaren",
+    "Orc", "Undead", "Tauren", "Troll", "Blood Elf", "Blood Elf (DH)", "Goblin", "Nightborne",
+    "Highmountain Tauren", "Void Elf", "Lightforged Draenei", "Mag'har Orc",
+    "Dark Iron Dwarf", "Kul Tiran", "Zandalari Troll", "Mechagnome", "Vulpera", "Dracthyr", "Dracthyr (Visage)",
+    "Earthen", "Haranir"
+}
+
+function addon.RegisterVoice(name, factory)
+    assert(type(name) == "string", "PlayerSpeech.RegisterVoice: name must be a string")
+    assert(type(factory) == "function", "PlayerSpeech.RegisterVoice: factory must be a function")
+    assert(not addon.ERR_MAP_FACTORY[name], "PlayerSpeech.RegisterVoice: voice '" .. name .. "' already exists")
+
+    addon.ERR_MAP_FACTORY[name] = factory
+    table.insert(races, name)
+end
+
 local function InitializeSettings()
     -- SPEECH_ENABLED
 
@@ -37,14 +54,6 @@ local function InitializeSettings()
     Settings.CreateCheckbox(category, enableAddonSetting, "Enable Player Error Speech")
 
     -- SPEECH_RACE
-
-    local races = {
-        "Human", "Gilnean", "Dwarf", "Night Elf", "Night Elf (DH)", "Gnome", "Draenei", "Worgen", "Pandaren",
-        "Orc", "Undead", "Tauren", "Troll", "Blood Elf", "Blood Elf (DH)", "Goblin", "Nightborne",
-        "Highmountain Tauren", "Void Elf", "Lightforged Draenei", "Mag'har Orc",
-        "Dark Iron Dwarf", "Kul Tiran", "Zandalari Troll", "Mechagnome", "Vulpera", "Dracthyr", "Dracthyr (Visage)",
-        "Earthen", "Haranir"
-    }
 
     local function GetRaceValue()
         for i, race in next, races do
@@ -240,14 +249,18 @@ end
 
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
+frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, name)
-    if name == addonName then
+    if event == "PLAYER_LOGIN" then
+        -- Checked here since custom voices only register once their companion addon has loaded
+        if not addon.ERR_MAP_FACTORY[addon.db.race] then addon.db.race = raceName end
+    elseif name == addonName then
         PlayerSpeechDB = PlayerSpeechDB or {}
         addon.db = PlayerSpeechDB
 
         -- Set Defaults
         if addon.db.enabled == nil then addon.db.enabled = true end
-        if not addon.ERR_MAP_FACTORY[addon.db.race] then addon.db.race = raceName end
+        if addon.db.race == nil then addon.db.race = raceName end
         if addon.db.gender == nil then addon.db.gender = defaultGender end
         if addon.db.visage == nil then addon.db.visage = true end
         if addon.db.eventToggles == nil then addon.db.eventToggles = {} end
