@@ -7,6 +7,10 @@ ignore = {
     "213",           -- unused loop variables
 }
 
+files["PlayerSpeech_Custom/Voice.lua"] = {
+    ignore = { "211/path" },
+}
+
 globals = {
     "PlayerSpeechDB",
 }
