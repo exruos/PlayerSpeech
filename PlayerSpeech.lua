@@ -29,7 +29,9 @@ local function GetErrorSoundIdFrom(errConst, raceName, gender)
 
     local soundId = raceMap[errConst]
 
-    if soundId then
+    if type(soundId) == "string" then
+        return soundId
+    elseif soundId then
         return soundId[gender]
     end
 
@@ -54,7 +56,11 @@ local function HandleErrorMessage(soundId, errorTime)
     end
     lastGlobalSoundTime = currentTime
 
-    PlaySound(soundId, "Dialog", true)
+    if type(soundId) == "string" then
+        PlaySoundFile(soundId, "Dialog")
+    else
+        PlaySound(soundId, "Dialog", true)
+    end
 end
 
 local function OnEvent(self, event, ...)

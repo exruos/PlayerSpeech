@@ -7,6 +7,10 @@ ignore = {
     "213",           -- unused loop variables
 }
 
+files["PlayerSpeech_Custom/Voice.lua"] = {
+    ignore = { "211/path" },
+}
+
 globals = {
     "PlayerSpeechDB",
 }
@@ -19,7 +23,9 @@ read_globals = {
     "GetCVar",
     "GetTime",
     "PlaySound",
+    "PlaySoundFile",
     "PlayerIsInCombat",
+    "PlayerSpeech",
     "SetCVar",
     "UnitRace",
     "UnitSex",

@@ -1,0 +1,8 @@
+## Interface: 120100, 120105, 120107
+## Title: PlayerSpeech Custom Voice
+## Author: Exru
+## IconTexture: 1044082
+## Notes: Template for adding your own voice lines to PlayerSpeech.
+## Dependencies: PlayerSpeech
+
+Voice.lua

@@ -1,1 +1,3 @@
 .vscode
+PlayerSpeech_Custom/sounds/*.ogg
+PlayerSpeech_Custom/sounds/*.mp3

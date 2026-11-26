@@ -1,8 +1,8 @@
-## Interface: 120100, 120105
+## Interface: 120100, 120105, 120107
 ## Title: PlayerSpeech
 ## Author: Exru
 ## Version: @project-version@
-## IconTexture: interface/icons/ui_dracthyr.blp
+## IconTexture: 4622487
 ## Notes: Allows to change your character's error speech voice lines.
 ## SavedVariablesPerCharacter: PlayerSpeechDB
 
